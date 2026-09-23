@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "options-market-maker"
+version = "0.0.0"
+description = "Options market-making simulator on Deribit data: quoting, hedging, fill model and PnL attribution."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # Unpinned while developing (installed editable from ../pricing-core).
+    # Pin to a pricing-core git tag once one exists (see CLAUDE.md).
+    "pricing-core",
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mm"]
+
+# --- ruff -----------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I isort, B bugbear, UP pyupgrade, NPY numpy-specific.
+# pep8-naming (N) deliberately off: finance notation (S, K, T, r, q, sigma).
+select = ["E", "W", "F", "I", "B", "UP", "NPY"]
+
+# --- pytest ---------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config"]
+# Equivalent of `-W error`: any warning fails the test instead of passing silently.
+filterwarnings = ["error"]
+markers = [
+    "slow: statistical / convergence tests (deselect with -m 'not slow')",
+]
+
+# --- coverage -------------------------------------------------------------
+[tool.coverage.run]
+source = ["mm"]
+branch = true
