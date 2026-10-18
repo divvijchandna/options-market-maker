@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 dependencies = [
     # Unpinned while developing (installed editable from ../pricing-core).
     # Pin to a pricing-core git tag once one exists (see CLAUDE.md).
-    "pricing-core",
+    "pricing-core[deribit]",  # live Deribit data needs the extra (certifi for TLS)
     "numpy>=1.26",
     "scipy>=1.11",
 ]
