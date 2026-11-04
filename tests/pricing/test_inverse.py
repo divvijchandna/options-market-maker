@@ -6,7 +6,12 @@ from pricing_core.analytic.black_scholes import black76_price
 from pricing_core.analytic.greeks import delta
 from pricing_core.market.adapters.deribit import parse_book_summary
 
-from mm.pricing.inverse import payoff_coin, premium_adjusted_delta, price_coin
+from mm.pricing.inverse import (
+    payoff_coin,
+    premium_adjusted_delta,
+    price_coin,
+    vega_coin,
+)
 
 # Two rows from a live Deribit get_book_summary_by_currency snapshot (2026-10-18).
 DERIBIT_ROWS = {
@@ -112,3 +117,13 @@ def test_scalar_in_float_out():
         payoff_coin(F, K, is_call=True),
     ):
         assert type(value) is float
+
+
+@pytest.mark.parametrize("is_call", [True, False])
+def test_vega_coin_is_slope_of_coin_price_in_vol(is_call):
+    h = 1e-4
+    slope = (
+        price_coin(F, K, T, SIGMA + h, is_call=is_call)
+        - price_coin(F, K, T, SIGMA - h, is_call=is_call)
+    ) / (2 * h)
+    assert vega_coin(F, K, T, SIGMA) == pytest.approx(slope, rel=1e-6)
