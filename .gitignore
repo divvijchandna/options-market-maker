@@ -46,3 +46,6 @@ cpp/build/
 # --- Data: recordings are never committed; only a small sample is ---
 data/*
 !data/sample/
+
+# --- Private design notes: kept locally, not published ---
+notes.md
